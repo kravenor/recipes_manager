@@ -26,7 +26,7 @@ export const useRecipesStore = defineStore("recipes", {
       this.loading = true
       try {
         const response = await apiClient.get(`/recipes/${slug}`)
-        this.currentRecipe = response.data
+        this.currentRecipe = response.data.data
       } catch (err) {
         this.error = err.message
       } finally {
