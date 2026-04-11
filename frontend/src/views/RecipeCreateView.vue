@@ -18,6 +18,10 @@
           <label>Tempo prep (min)</label>
           <input v-model="form.prep_time" type="number" />
         </div>
+         <div class="form-group">
+          <label>Tempo di cottura (min)</label>
+          <input v-model="form.cook_time" type="number" />
+        </div>
 
         <div class="form-group">
           <label>Porzioni</label>
