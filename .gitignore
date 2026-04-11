@@ -1,4 +1,5 @@
+# Project specific
 backend/.env
-backend/vendor
-frontend/node_modules/
 backend/vendor/
+frontend/node_modules/
+
