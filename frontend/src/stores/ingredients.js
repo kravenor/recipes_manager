@@ -26,5 +26,34 @@ export const useIngredientsStore = defineStore("ingredients", {
         this.loading = false
       }
     },
+    async createIngredient(name, category = null) {
+      try {
+        const response = await apiClient.post("/ingredients", {
+          name,
+          category,
+        })
+        return response.data
+      } catch (err) {
+        // If 422 (duplicate), try to find existing
+        if (err.response?.status === 422) {
+          const searchResponse = await apiClient.get("/ingredients/search", {
+            params: { q: name },
+          })
+          const results = searchResponse.data.data || searchResponse.data
+          const existing = results.find(
+            (ing) => ing.name.toLowerCase() === name.toLowerCase()
+          )
+          if (existing) return existing
+        }
+        throw err
+      }
+    },
+    async findOrCreateIngredient(name, category = null) {
+      const response = await apiClient.post("/ingredients/find-or-create", {
+        name,
+        category,
+      })
+      return response.data
+    },
   },
 })

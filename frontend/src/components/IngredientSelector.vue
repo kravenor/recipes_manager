@@ -117,16 +117,20 @@ const handleClickOutside = (event) => {
 watch(
   selectedIngredients,
   (newVal) => {
-    emit("update:modelValue", newVal);
+    emit("update:modelValue", [...newVal]);
   },
-  { deep: true },
+  { deep: true, flush: 'post' },
 );
 
 watch(
   () => props.modelValue,
   (newVal) => {
-    selectedIngredients.value = [...newVal];
+    // Avoid updating if values are already equal to prevent loops
+    if (JSON.stringify(selectedIngredients.value) !== JSON.stringify(newVal)) {
+      selectedIngredients.value = [...newVal];
+    }
   },
+  { deep: true },
 );
 
 const debouncedSearch = () => {

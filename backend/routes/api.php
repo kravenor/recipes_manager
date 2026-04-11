@@ -15,6 +15,8 @@ Route::delete("/recipes/{id}", [RecipeController::class, "destroy"]);
 
 Route::get("/ingredients", [IngredientController::class, "index"]);
 Route::get("/ingredients/search", [IngredientController::class, "search"]);
+Route::post("/ingredients", [IngredientController::class, "store"]);
+Route::post("/ingredients/find-or-create", [IngredientController::class, "findOrCreate"]);
 
 Route::get("/categories", [CategoryController::class, "index"]);
 

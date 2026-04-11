@@ -70,7 +70,7 @@ const formatDifficulty = (diff) => {
 
 const formatQuantity = (qty) => {
   // Remove trailing zeros if it's a whole number
-  return Number.isInteger(qty) ? qty.toString() : qty.toFixed(2).replace(/\.?0+$/, "")
+  return Number.isInteger(qty) ? qty.toString() : Number(qty).toFixed(2).replace(/\.?0+$/, "")
 }
 </script>
 
