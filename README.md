@@ -4,7 +4,7 @@ Applicazione web per la gestione di ricette culinarie con ricerca avanzata per i
 
 ## Architettura
 
-- **Backend**: Laravel 11 API RESTful
+- **Backend**: Laravel 12 API RESTful
 - **Frontend**: Vue 3 + Vite + Pinia
 - **Database**: MySQL 8.0
 - **Ricerca**: Elasticsearch 8.x

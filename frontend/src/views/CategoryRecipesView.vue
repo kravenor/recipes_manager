@@ -19,9 +19,12 @@
     <div class="recipes-section">
       <div v-if="currentCategoryName" class="section-header">
         <h1>{{ currentCategoryName }}</h1>
-        <router-link to="/search-by-ingredients" class="btn-filter"
-          >🔍 Cerca in questa categoria</router-link
+        <router-link
+          :to="{ path: '/search-by-ingredients', query: { category: currentCategory } }"
+          class="btn-filter"
         >
+          🔍 Cerca in questa categoria
+        </router-link>
       </div>
       <div v-else class="section-header">
         <h1>Tutte le ricette</h1>

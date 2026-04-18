@@ -90,12 +90,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, watch } from "vue"
+import { useRoute } from "vue-router"
 import { useRecipesStore } from "@/stores/recipes.js"
 import { useCategoriesStore } from "@/stores/categories.js"
 import IngredientSelector from "@/components/IngredientSelector.vue"
 import apiClient from "@/api/client.js"
 
+const route = useRoute()
 const recipesStore = useRecipesStore()
 const categoriesStore = useCategoriesStore()
 const selectedIngredients = ref([])
@@ -104,9 +106,26 @@ const recipes = ref([])
 const loading = ref(false)
 const hasSearched = ref(false)
 
+// Preseleziona categoria se passata via query param
+const preselectCategory = () => {
+  const categorySlug = route.query.category
+  if (categorySlug && categoriesStore.categories.length > 0) {
+    const category = categoriesStore.categories.find((c) => c.slug === categorySlug)
+    if (category && !selectedCategories.value.includes(category.id)) {
+      selectedCategories.value.push(category.id)
+    }
+  }
+}
+
 onMounted(() => {
-  categoriesStore.fetchCategories()
+  categoriesStore.fetchCategories().then(() => {
+    preselectCategory()
+  })
 })
+
+// Se le categorie arrivano dopo o cambia la query, riprova a preselezionare
+watch(() => categoriesStore.categories, preselectCategory)
+watch(() => route.query.category, preselectCategory)
 
 const searchRecipes = async () => {
   if (selectedIngredients.value.length === 0) return
