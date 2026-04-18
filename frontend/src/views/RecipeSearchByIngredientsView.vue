@@ -27,17 +27,32 @@
       </button>
     </div>
 
-    <div v-if="selectedIngredients.length > 0" class="selected-summary">
-      <h3>Ingredienti selezionati:</h3>
-      <div class="ingredient-tags">
-        <span
-          v-for="ing in selectedIngredients"
-          :key="ing.id"
-          class="ingredient-tag"
-        >
-          {{ ing.name }}
-        </span>
+    <div v-if="selectedIngredients.length > 0 || selectedCategories.length > 0" class="selected-summary">
+      <div v-if="selectedIngredients.length > 0" class="selected-section">
+        <h3>Ingredienti selezionati:</h3>
+        <div class="ingredient-tags">
+          <span
+            v-for="ing in selectedIngredients"
+            :key="ing.id"
+            class="ingredient-tag"
+          >
+            {{ ing.name }}
+          </span>
+        </div>
       </div>
+
+      <!-- <div v-if="selectedCategories.length > 0" class="selected-section">
+        <h3>Categorie selezionate:</h3>
+        <div class="ingredient-tags">
+          <span
+            v-for="catId in selectedCategories"
+            :key="catId"
+            class="category-tag"
+          >
+            {{ getCategoryName(catId) }}
+          </span>
+        </div>
+      </div> -->
     </div>
 
     <div v-if="loading" class="loading">Caricamento ricette...</div>
@@ -161,6 +176,11 @@ const formatDifficulty = (difficulty) => {
   return map[difficulty] || difficulty
 }
 
+const getCategoryName = (catId) => {
+  const category = categoriesStore.categories.find((c) => c.id === catId)
+  return category ? category.name : catId
+}
+
 const getMatchingIngredients = (recipe) => {
   if (!recipe.ingredients) return []
   const selectedIds = selectedIngredients.value.map((i) => i.id)
@@ -281,6 +301,22 @@ h1 {
   padding: 0.25rem 0.75rem;
   border-radius: 16px;
   font-size: 0.875rem;
+}
+
+.category-tag {
+  background: #e65100;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+}
+
+.selected-section {
+  margin-bottom: 1rem;
+}
+
+.selected-section:last-child {
+  margin-bottom: 0;
 }
 
 .loading {

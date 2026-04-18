@@ -21,9 +21,13 @@ class RecipeController extends Controller
 
         if ($request->has("category_ids")) {
             $categoryIds = is_array($request->category_ids) ? $request->category_ids : [$request->category_ids];
-            $query->whereHas("categories", function ($q) use ($categoryIds) {
-                $q->whereIn("id", $categoryIds);
-            });
+            // Filtra valori nulli o vuoti
+            $categoryIds = array_filter($categoryIds, fn($id) => !is_null($id) && $id !== "");
+            if (!empty($categoryIds)) {
+                $query->whereHas("categories", function ($q) use ($categoryIds) {
+                    $q->whereIn("categories.id", $categoryIds);
+                });
+            }
         }
         
         if ($request->has("difficulty")) {
