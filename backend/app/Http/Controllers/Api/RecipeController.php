@@ -24,10 +24,13 @@ class RecipeController extends Controller
         }
         
         if ($request->has("ingredients")) {
-            $ingredients = $request->ingredients;
-            $query->whereHas("ingredients", function ($q) use ($ingredients) {
-                $q->whereIn("name", $ingredients);
-            });
+            $ingredients = is_array($request->ingredients) ? $request->ingredients : [$request->ingredients];
+            // Cerca ricette che contengono TUTTI gli ingredienti selezionati (AND)
+            foreach ($ingredients as $ingredient) {
+                $query->whereHas("ingredients", function ($q) use ($ingredient) {
+                    $q->where("name", "LIKE", "%" . $ingredient . "%");
+                });
+            }
         }
         
         $recipes = $query->paginate(15);

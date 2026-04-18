@@ -9,6 +9,7 @@ const router = createRouter({
     { path: "/recipes/new", name: "recipe-new", component: () => import("@/views/RecipeCreateView.vue") },
     { path: "/recipes/:slug", name: "recipe-detail", component: () => import("@/views/RecipeDetailView.vue") },
     { path: "/search", name: "search", component: () => import("@/views/SearchResultsView.vue") },
+    { path: "/search-by-ingredients", name: "search-by-ingredients", component: () => import("@/views/RecipeSearchByIngredientsView.vue") },
   ],
 })
 

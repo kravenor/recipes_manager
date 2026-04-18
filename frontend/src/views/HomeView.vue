@@ -6,6 +6,14 @@
       <input v-model="query" @keyup.enter="search" placeholder="Cerca ricette..." />
       <button @click="search">Cerca</button>
     </div>
+    <div class="quick-links">
+      <router-link to="/search-by-ingredients" class="quick-link">
+        🔍 Cerca per ingredienti
+      </router-link>
+      <router-link to="/recipes/new" class="quick-link">
+        ➕ Aggiungi ricetta
+      </router-link>
+    </div>
     <div v-if="store.loading">Caricamento...</div>
     <div v-else class="recipes-grid">
       <div v-for="r in store.recipes" :key="r.id" class="recipe-card" @click="$router.push(`/recipes/${r.slug}`)">
@@ -36,6 +44,9 @@ h1 { font-size: 2.5rem; margin-bottom: 1rem; }
 .search-box { margin: 2rem 0; display: flex; gap: 0.5rem; justify-content: center; }
 input { padding: 0.75rem; width: 300px; border: 1px solid #ddd; border-radius: 4px; }
 button { padding: 0.75rem 1.5rem; background: #e65100; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.quick-links { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.quick-link { padding: 0.5rem 1rem; background: white; border: 2px solid #e65100; color: #e65100; text-decoration: none; border-radius: 4px; transition: all 0.2s; }
+.quick-link:hover { background: #e65100; color: white; }
 .recipes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-top: 2rem; }
 .recipe-card { background: white; padding: 1rem; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 .recipe-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
