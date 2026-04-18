@@ -7,6 +7,9 @@
       <button @click="search">Cerca</button>
     </div>
     <div class="quick-links">
+      <router-link to="/categories" class="quick-link">
+        📂 Categorie
+      </router-link>
       <router-link to="/search-by-ingredients" class="quick-link">
         🔍 Cerca per ingredienti
       </router-link>

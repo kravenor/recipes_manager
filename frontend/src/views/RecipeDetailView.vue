@@ -19,6 +19,18 @@
       </span>
     </div>
 
+    <div v-if="store.currentRecipe.categories?.length" class="categories-bar">
+      <span class="categories-label">Categorie:</span>
+      <router-link
+        v-for="cat in store.currentRecipe.categories"
+        :key="cat.id"
+        :to="`/categories/${cat.slug}`"
+        class="category-pill"
+      >
+        {{ cat.name }}
+      </router-link>
+    </div>
+
     <div class="content-grid">
       <div class="ingredients-section" v-if="store.currentRecipe.ingredients?.length">
         <h2>🥘 Ingredienti</h2>
@@ -106,6 +118,34 @@ h1 {
   border-radius: 4px;
   font-size: 0.875rem;
   font-weight: 500;
+}
+
+.categories-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.categories-label {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.category-pill {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.category-pill:hover {
+  background: #1976d2;
+  color: white;
 }
 
 .content-grid {

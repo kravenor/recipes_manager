@@ -59,14 +59,27 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="difficulty">Difficoltà</label>
-        <select id="difficulty" v-model="form.difficulty">
-          <option value="">Seleziona...</option>
-          <option value="easy">Facile</option>
-          <option value="medium">Media</option>
-          <option value="hard">Difficile</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="difficulty">Difficoltà</label>
+          <select id="difficulty" v-model="form.difficulty">
+            <option value="">Seleziona...</option>
+            <option value="easy">Facile</option>
+            <option value="medium">Media</option>
+            <option value="hard">Difficile</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Categoria</label>
+          <select id="category" v-model="form.category_ids" multiple>
+            <option value="">Seleziona...</option>
+            <option v-for="cat in categoriesStore.categories" :key="cat.id" :value="cat.id">
+              {{ cat.name }}
+            </option>
+          </select>
+          <small class="help-text">Tieni premuto Ctrl/Cmd per selezionare più categorie</small>
+        </div>
       </div>
 
       <IngredientSelector v-model="form.ingredients" />
@@ -99,15 +112,17 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { useRecipesStore } from "@/stores/recipes.js"
 import { useIngredientsStore } from "@/stores/ingredients.js"
+import { useCategoriesStore } from "@/stores/categories.js"
 import IngredientSelector from "@/components/IngredientSelector.vue"
 
 const router = useRouter()
 const recipesStore = useRecipesStore()
 const ingredientsStore = useIngredientsStore()
+const categoriesStore = useCategoriesStore()
 
 const form = ref({
   title: "",
@@ -117,7 +132,12 @@ const form = ref({
   cook_time: null,
   servings: null,
   difficulty: "",
+  category_ids: [],
   ingredients: [],
+})
+
+onMounted(() => {
+  categoriesStore.fetchCategories()
 })
 
 const saving = ref(false)
@@ -264,6 +284,29 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: #e65100;
+}
+
+select[multiple] {
+  min-height: 100px;
+  padding: 0.5rem;
+}
+
+select[multiple] option {
+  padding: 0.5rem;
+  margin: 2px 0;
+  border-radius: 4px;
+}
+
+select[multiple] option:checked {
+  background: #e65100 linear-gradient(0deg, #e65100 0%, #e65100 100%);
+  color: white;
+}
+
+.help-text {
+  display: block;
+  margin-top: 0.25rem;
+  color: #666;
+  font-size: 0.8rem;
 }
 
 .form-actions {

@@ -18,6 +18,13 @@ class RecipeController extends Controller
                 $q->where("slug", $request->category);
             });
         }
+
+        if ($request->has("category_ids")) {
+            $categoryIds = is_array($request->category_ids) ? $request->category_ids : [$request->category_ids];
+            $query->whereHas("categories", function ($q) use ($categoryIds) {
+                $q->whereIn("id", $categoryIds);
+            });
+        }
         
         if ($request->has("difficulty")) {
             $query->where("difficulty", $request->difficulty);

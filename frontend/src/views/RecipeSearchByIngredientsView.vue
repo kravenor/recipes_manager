@@ -4,6 +4,19 @@
     <p class="subtitle">Seleziona gli ingredienti che hai a disposizione</p>
 
     <div class="search-section">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Categorie (opzionale)</label>
+          <select v-model="selectedCategories" multiple class="category-select">
+            <option value="">Tutte le categorie</option>
+            <option v-for="cat in categoriesStore.categories" :key="cat.id" :value="cat.id">
+              {{ cat.name }}
+            </option>
+          </select>
+          <small class="help-text">Tieni premuto Ctrl/Cmd per selezionare più categorie</small>
+        </div>
+      </div>
+
       <IngredientSelector v-model="selectedIngredients" />
       <button
         @click="searchRecipes"
@@ -77,16 +90,23 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import { useRecipesStore } from "@/stores/recipes.js"
+import { useCategoriesStore } from "@/stores/categories.js"
 import IngredientSelector from "@/components/IngredientSelector.vue"
 import apiClient from "@/api/client.js"
 
 const recipesStore = useRecipesStore()
+const categoriesStore = useCategoriesStore()
 const selectedIngredients = ref([])
+const selectedCategories = ref([])
 const recipes = ref([])
 const loading = ref(false)
 const hasSearched = ref(false)
+
+onMounted(() => {
+  categoriesStore.fetchCategories()
+})
 
 const searchRecipes = async () => {
   if (selectedIngredients.value.length === 0) return
@@ -96,9 +116,14 @@ const searchRecipes = async () => {
 
   try {
     const ingredientNames = selectedIngredients.value.map((i) => i.name)
-    const response = await apiClient.get("/recipes", {
-      params: { ingredients: ingredientNames },
-    })
+    const params = { ingredients: ingredientNames }
+
+    // Aggiungi filtro categorie se selezionate
+    if (selectedCategories.value.length > 0) {
+      params.category_ids = selectedCategories.value
+    }
+
+    const response = await apiClient.get("/recipes", { params })
     recipes.value = response.data.data || response.data
   } catch (err) {
     console.error("Errore nella ricerca:", err)
@@ -150,6 +175,46 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 1.5rem;
+}
+
+.filter-row {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.category-select {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.category-select option {
+  padding: 0.5rem;
+  margin: 2px 0;
+  border-radius: 4px;
+}
+
+.category-select option:checked {
+  background: #e65100 linear-gradient(0deg, #e65100 0%, #e65100 100%);
+  color: white;
+}
+
+.help-text {
+  display: block;
+  margin-top: 0.25rem;
+  color: #666;
+  font-size: 0.8rem;
 }
 
 .search-btn {
