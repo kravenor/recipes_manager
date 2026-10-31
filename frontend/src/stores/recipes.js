@@ -48,7 +48,19 @@ export const useRecipesStore = defineStore("recipes", {
       this.loading = true
       try {
         const response = await apiClient.post("/recipes", data)
-        return response.data
+        return response.data.data
+      } catch (err) {
+        this.error = err.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+    async updateRecipe(id, data) {
+      this.loading = true
+      try {
+        const response = await apiClient.put(`/recipes/${id}`, data)
+        return response.data.data
       } catch (err) {
         this.error = err.message
         throw err

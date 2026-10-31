@@ -117,9 +117,36 @@ class RecipeController extends Controller
             "servings" => "nullable|integer|min:1",
             "difficulty" => "nullable|string|in:easy,medium,hard",
             "image_url" => "nullable|string|url",
+            "ingredients" => "sometimes|array",
+            "ingredients.*.id" => "required_with:ingredients|exists:ingredients,id",
+            "ingredients.*.quantity" => "nullable|numeric",
+            "ingredients.*.unit" => "nullable|string",
+            "ingredients.*.notes" => "nullable|string",
+            "category_ids" => "sometimes|array",
+            "category_ids.*" => "exists:categories,id",
+            "tag_ids" => "sometimes|array",
+            "tag_ids.*" => "exists:tags,id",
         ]);
 
         $recipe->update($validated);
+
+        if (isset($validated["ingredients"])) {
+            $recipe->ingredients()->sync(
+                collect($validated["ingredients"])->mapWithKeys(fn ($item) => [$item["id"] => [
+                    "quantity" => $item["quantity"] ?? null,
+                    "unit" => $item["unit"] ?? null,
+                    "notes" => $item["notes"] ?? null,
+                ]])
+            );
+        }
+
+        if (isset($validated["category_ids"])) {
+            $recipe->categories()->sync($validated["category_ids"]);
+        }
+
+        if (isset($validated["tag_ids"])) {
+            $recipe->tags()->sync($validated["tag_ids"]);
+        }
 
         return new RecipeResource($recipe->fresh()->load(["ingredients", "categories", "tags"]));
     }
