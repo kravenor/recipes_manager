@@ -69,14 +69,38 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue"
+import { onMounted, onUnmounted } from "vue"
 import { useRoute } from "vue-router"
 import { useRecipesStore } from "@/stores/recipes.js"
 
 const route = useRoute()
 const store = useRecipesStore()
 
-onMounted(() => store.fetchRecipe(route.params.slug))
+// Tiene acceso lo schermo mentre si cucina. Il browser rilascia il lock quando
+// la scheda va in background, quindi lo richiediamo di nuovo al ritorno.
+// Richiede HTTPS o localhost: altrimenti navigator.wakeLock non esiste.
+let wakeLock = null
+
+const requestWakeLock = async () => {
+  if (!("wakeLock" in navigator) || document.visibilityState !== "visible") return
+  try {
+    wakeLock = await navigator.wakeLock.request("screen")
+  } catch (err) {
+    console.warn("Wake Lock non disponibile:", err)
+  }
+}
+
+onMounted(() => {
+  store.fetchRecipe(route.params.slug)
+  requestWakeLock()
+  document.addEventListener("visibilitychange", requestWakeLock)
+})
+
+onUnmounted(() => {
+  document.removeEventListener("visibilitychange", requestWakeLock)
+  wakeLock?.release()
+  wakeLock = null
+})
 
 const formatDifficulty = (diff) => {
   const map = { easy: "Facile", medium: "Media", hard: "Difficile" }
@@ -157,7 +181,12 @@ h1 {
   gap: 2rem;
 }
 
-@media (max-width: 768px) {
+/* Senza ingredienti le istruzioni occupano tutta la larghezza */
+.instructions-section:only-child {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
   .content-grid {
     grid-template-columns: 1fr;
   }
