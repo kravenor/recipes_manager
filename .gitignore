@@ -3,3 +3,4 @@ backend/.env
 backend/vendor/
 frontend/node_modules/
 
+docker/traefik/certs/

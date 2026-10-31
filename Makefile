@@ -1,4 +1,5 @@
-.PHONY: help up down restart build install migrate seed backend-install frontend-install test
+SHELL := /bin/bash
+.PHONY: help up down restart build install migrate seed backend-install frontend-install test certs
 
 help:
 	@echo "Ricette App - Comandi disponibili:"
@@ -16,6 +17,7 @@ help:
 	@echo "  make shell-back      - Entra nel container backend"
 	@echo "  make shell-front     - Entra nel container frontend"
 	@echo "  make es-import       - Importa dati in Elasticsearch"
+	@echo "  make certs           - Genera i certificati HTTPS locali"
 
 up:
 	docker-compose up -d
@@ -59,3 +61,17 @@ shell-front:
 es-import:
 	docker-compose exec backend php artisan scout:import "App\\Models\\Recipe"
 	docker-compose exec backend php artisan scout:import "App\\Models\\Ingredient"
+
+# CA locale + certificato per ricette.local e sottodomini (HTTPS via Traefik).
+# Sui dispositivi (es. tablet) va installato come attendibile docker/traefik/certs/ca.crt
+certs:
+	mkdir -p docker/traefik/certs
+	cd docker/traefik/certs && \
+	[ -f ca.key ] || openssl req -x509 -newkey rsa:2048 -nodes -days 3650 \
+		-keyout ca.key -out ca.crt -subj "/CN=Ricette Local CA" \
+		-addext "basicConstraints=critical,CA:TRUE" -addext "keyUsage=critical,keyCertSign,cRLSign"
+	cd docker/traefik/certs && \
+	openssl req -newkey rsa:2048 -nodes -keyout ricette.local.key -out ricette.local.csr -subj "/CN=ricette.local" && \
+	openssl x509 -req -in ricette.local.csr -CA ca.crt -CAkey ca.key -CAcreateserial -days 397 -out ricette.local.crt \
+		-extfile <(printf "subjectAltName=DNS:ricette.local,DNS:*.ricette.local\nextendedKeyUsage=serverAuth\nbasicConstraints=CA:FALSE") && \
+	rm ricette.local.csr
