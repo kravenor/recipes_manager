@@ -154,12 +154,6 @@ watch(currentCategory, () => {
   padding: 1rem;
 }
 
-@media (max-width: 768px) {
-  .category-recipes {
-    grid-template-columns: 1fr;
-  }
-}
-
 .categories-nav {
   background: white;
   padding: 1rem;
@@ -372,5 +366,26 @@ watch(currentCategory, () => {
 
 .page-info {
   color: #666;
+}
+
+/* Tablet in verticale: categorie come striscia orizzontale scorrevole sopra le ricette */
+@media (max-width: 900px) {
+  .category-recipes {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-list {
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-item {
+    flex-shrink: 0;
+  }
+
+  .category-desc {
+    display: none;
+  }
 }
 </style>

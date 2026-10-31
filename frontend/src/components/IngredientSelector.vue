@@ -209,6 +209,7 @@ const addFreeIngredient = () => {
 
 .ingredient-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
@@ -238,6 +239,7 @@ const addFreeIngredient = () => {
 
 .notes-input {
   flex: 2;
+  min-width: 8rem;
   padding: 0.25rem;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -248,8 +250,11 @@ const addFreeIngredient = () => {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
+  font-size: 1.25rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -277,7 +282,7 @@ const addFreeIngredient = () => {
   border-top: none;
   border-radius: 0 0 4px 4px;
   list-style: none;
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
   z-index: 100;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

@@ -54,6 +54,9 @@
 
     <div class="actions">
       <button @click="$router.back()" class="btn-secondary">← Indietro</button>
+      <router-link :to="`/recipes/${store.currentRecipe.slug}/edit`" class="btn-secondary">
+        ✏️ Modifica
+      </router-link>
     </div>
   </div>
 
@@ -227,6 +230,7 @@ h2 {
   border-radius: 4px;
   cursor: pointer;
   color: #666;
+  text-decoration: none;
 }
 
 .btn-secondary:hover {

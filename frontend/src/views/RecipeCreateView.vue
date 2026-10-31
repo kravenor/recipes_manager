@@ -1,6 +1,6 @@
 <template>
   <div class="recipe-create">
-    <h1>Nuova Ricetta</h1>
+    <h1>{{ recipeId ? "Modifica Ricetta" : "Nuova Ricetta" }}</h1>
 
     <form @submit.prevent="submit" class="recipe-form">
       <div class="form-group">
@@ -113,12 +113,13 @@
 
 <script setup>
 import { ref, onMounted } from "vue"
-import { useRouter } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { useRecipesStore } from "@/stores/recipes.js"
 import { useIngredientsStore } from "@/stores/ingredients.js"
 import { useCategoriesStore } from "@/stores/categories.js"
 import IngredientSelector from "@/components/IngredientSelector.vue"
 
+const route = useRoute()
 const router = useRouter()
 const recipesStore = useRecipesStore()
 const ingredientsStore = useIngredientsStore()
@@ -136,8 +137,38 @@ const form = ref({
   ingredients: [],
 })
 
-onMounted(() => {
+// Valorizzato in modalità modifica (/recipes/:slug/edit)
+const recipeId = ref(null)
+
+onMounted(async () => {
   categoriesStore.fetchCategories()
+
+  if (route.params.slug) {
+    await recipesStore.fetchRecipe(route.params.slug)
+    const recipe = recipesStore.currentRecipe
+    if (!recipe) {
+      error.value = "Ricetta non trovata"
+      return
+    }
+    recipeId.value = recipe.id
+    form.value = {
+      title: recipe.title,
+      description: recipe.description || "",
+      instructions: recipe.instructions,
+      prep_time: recipe.prep_time,
+      cook_time: recipe.cook_time,
+      servings: recipe.servings,
+      difficulty: recipe.difficulty || "",
+      category_ids: (recipe.categories || []).map((c) => c.id),
+      ingredients: (recipe.ingredients || []).map((i) => ({
+        id: i.id,
+        name: i.name,
+        quantity: i.quantity,
+        unit: i.unit || "",
+        notes: i.notes || "",
+      })),
+    }
+  }
 })
 
 const saving = ref(false)
@@ -209,7 +240,9 @@ const submit = async () => {
       ingredients: [...existingIngredients, ...createdIngredients],
     }
 
-    const result = await recipesStore.createRecipe(payload)
+    const result = recipeId.value
+      ? await recipesStore.updateRecipe(recipeId.value, payload)
+      : await recipesStore.createRecipe(payload)
     router.push(`/recipes/${result.slug}`)
   } catch (err) {
     console.error("Failed to create recipe:", err)

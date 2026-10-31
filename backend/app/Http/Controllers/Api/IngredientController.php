@@ -29,7 +29,10 @@ class IngredientController extends Controller
             return $this->index($request);
         }
 
-        $ingredients = Ingredient::search($query)
+        // LIKE anziché Elasticsearch: l'autocomplete deve trovare anche parole parziali ("cac" → "cacao")
+        $ingredients = Ingredient::where("name", "LIKE", "%" . $query . "%")
+            ->orderByRaw("name LIKE ? DESC", [$query . "%"])
+            ->orderBy("name")
             ->paginate(20);
 
         return response()->json($ingredients);
