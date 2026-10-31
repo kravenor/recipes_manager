@@ -37,13 +37,15 @@ class IngredientController extends Controller
 
     public function store(Request $request)
     {
+        // Normalize before validating so the unique check sees the stored form
+        if (is_string($request->name)) {
+            $request->merge(["name" => mb_strtolower(trim($request->name))]);
+        }
+
         $validated = $request->validate([
             "name" => "required|string|max:255|unique:ingredients,name",
             "category" => "nullable|string|max:100",
         ]);
-
-        // Normalize: lowercase, trim
-        $validated["name"] = strtolower(trim($validated["name"]));
 
         $ingredient = Ingredient::create($validated);
 
@@ -57,7 +59,7 @@ class IngredientController extends Controller
             "category" => "nullable|string|max:100",
         ]);
 
-        $name = strtolower(trim($validated["name"]));
+        $name = mb_strtolower(trim($validated["name"]));
 
         // Find existing or create new
         $ingredient = Ingredient::firstOrCreate(
