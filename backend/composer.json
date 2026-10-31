@@ -7,10 +7,10 @@
     "require": {
         "php": "^8.2",
         "cocur/slugify": "^4.6",
-        "cviebrock/eloquent-sluggable": "^12.0",
-        "laravel/framework": "^12.0",
+        "cviebrock/eloquent-sluggable": "^13.0",
+        "laravel/framework": "^13.0",
         "laravel/scout": "^10.0",
-        "laravel/tinker": "^2.10",
+        "laravel/tinker": "^3.0",
         "matchish/laravel-scout-elasticsearch": "^7.12"
     },
     "require-dev": {
