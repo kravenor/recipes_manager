@@ -41,6 +41,11 @@ class CategorySeeder extends Seeder
                 'slug' => 'cocktails',
                 'description' => 'Bevande miscelate alcoliche e analcoliche'
             ],
+            [
+                'name' => 'Vegan',
+                'slug' => 'vegan',
+                'description' => 'Niente prodotti di origine animale'
+            ],
         ];
 
         foreach ($categories as $category) {
